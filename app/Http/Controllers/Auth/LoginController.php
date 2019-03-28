@@ -42,6 +42,9 @@ class LoginController extends Controller
 
     public function showLoginForm(){
         $user = Auth::user(); 
+        if (is_null($user)){
+            return view('auth.login');
+        }
         return view('home', compact('user'));
     }
 }

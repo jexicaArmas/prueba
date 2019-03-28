@@ -10,7 +10,7 @@
           <div class="col-lg-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="title-5 m-b-35">{{ __('Create Companies') }}</h3>
+                <h3 class="title-5 m-b-35">{{ __('Edit Company') }}</h3>
               </div>           
               <div class="card-body card-block">
                 @if (count($errors) > 0)
@@ -22,14 +22,15 @@
                     </ul>
                   </div>
                 @endif
-                <form  method="POST" action="{{route ('companies.store') }}" class="form-horizontal" enctype="multipart/form-data">
+                <form  method="POST" action="{{route ('companies.update', $company->id) }}" class="form-horizontal">
+                  @method('PATCH')
                   {!! csrf_field() !!}  
                   <div class="row form-group">
                     <div class="col col-md-3">
                       <label for="name" class=" form-control-label">{{ __('Name') }}</label>
                     </div>
                     <div class="col-12 col-md-9">
-                      <input type="text" id="name" name="name" placeholder="Enter Name..." class="form-control">
+                      <input type="text" id="name" name="name" value="{{$company->name}}" placeholder="Enter Name..." class="form-control">
                     </div>
                   </div>
                   <div class="row form-group">
@@ -37,7 +38,7 @@
                       <label for="email" class=" form-control-label">{{ __('Email') }}</label>
                     </div>
                     <div class="col-12 col-md-9">
-                      <input type="text" id="email" name="email" placeholder="Enter Email..." class="form-control">
+                      <input type="text" id="email" name="email"  value="{{$company->email}}" placeholder="Enter Email..." class="form-control">
                     </div>
                   </div>
                   <div class="row form-group">
@@ -45,6 +46,7 @@
                       <label for="logo" class=" form-control-label">{{ __('Logo') }}</label>
                     </div>
                     <div class="col-12 col-md-9">
+                      <img style="width:94px;height:94px" src="{{ URL::asset('storage/logo/'.$company->logo)}}">
                       <input name="logo" type="file" accept="image/jpg, image/jpeg" multiple id="uploadDocuments"  />
                     </div>
                   </div>
@@ -53,7 +55,7 @@
                       <label for="website" class=" form-control-label">{{ __('Website') }}</label>
                     </div>
                     <div class="col-12 col-md-9">
-                      <input type="text" id="website" name="website" placeholder="Enter Website..." class="form-control">
+                      <input type="text" id="website" name="website" value="{{$company->website}}" placeholder="Enter Website..." class="form-control">
                     </div>
                   </div>            
                   <div class="card-footer">

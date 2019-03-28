@@ -17,6 +17,6 @@ class Company extends Model
         'logo',
         'website'
     ];
-    protected $hidden   = [];
-    protected $dates    = ['created_at', 'updated_at', 'deleted_at'];
+  protected $hidden   = [];
+  protected $dates    = ['created_at', 'updated_at', 'deleted_at'];
 }

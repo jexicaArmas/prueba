@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @extends('layouts.menu')
-
 @section('content')
     <div class="main-content">
         <div class="section__content section__content--p30">
@@ -9,37 +8,38 @@
                     <div class="col-md-12">
                         <!-- DATA TABLE -->
                         <div class="au-card recent-report">
-                            <h3 class="title-5 m-b-35">{{ __('Companies') }}</h3>
-                            <div class="table-data__tool">
-                                <div class="table-data__tool-right">
-                                    <a class="au-btn au-btn-icon au-btn--green au-btn--small"
-                                       href="{{route('companies.create')}}">
-                                        <i class="zmdi zmdi-plus"></i>{{ __('Add Item') }}</a>
-                                </div>
+                        <h3 class="title-5 m-b-35">{{ __('Employees') }}</h3>
+                        <div class="table-data__tool">
+                            <div class="table-data__tool-right">
+                                <a class="au-btn au-btn-icon au-btn--green au-btn--small"
+                                   href="{{route('employees.create')}}">
+                                    <i class="zmdi zmdi-plus"></i>{{ __('Add Item') }}</a>
                             </div>
+                        </div>
 
-                            @if (count($errors) > 0)
-                            <div class="alert alert-danger" role="alert">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            @endif
-                            <div class="col-md-12">
+                        @if (count($errors) > 0)
+                        <div class="alert alert-danger" role="alert">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        <div class="col-md-12">
                                 <div class="table-responsive table-responsive-data2">
                                     <table id="list" class="table table-data2 dataTable compact display" style="width: 100%">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('Id') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Email') }}</th>
-                                                <th>{{ __('Actions') }}</th>
+                                                <th>{{__('Name') }}</th>
+                                                <th>{{__('Lastname') }}</th>
+                                                <th>{{__('Email') }}</th>
+                                                <th>{{__('Actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
+    
                                         </tbody>
                                     </table>
                                 </div>
@@ -56,6 +56,8 @@
 <script src="{!! asset('js/jquery.dataTables.min.js') !!}"></script>
     <script src="{!! asset('js/datatables.bootstrap.js') !!}"></script>
     <script src="{!! asset('js/handlebars.js') !!}"></script>
+    <script type="text/javascript" language="javascript" src="{!! asset('js/dataTables.buttons.min.js') !!}"></script>
+    <script type="text/javascript" language="javascript" src="{!! asset('js/buttons.html5.min.js') !!}"></script>
     <script type="text/javascript" language="javascript" src="{!! asset('js/jszip.min.js') !!}"></script>
     <script type="text/javascript" language="javascript" src="{!! asset('js/pdfmake.min.js') !!}"></script>
     <script type="text/javascript" language="javascript" src="{!! asset('js/vfs_fonts.js') !!}"></script>
@@ -68,11 +70,11 @@
            serverSide: true,
            pageLength: 10,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-           ajax: '{{ route('companies.list') }}',
+           ajax: '{{ route('employees.list') }}',      
            columns: [
-               { data: 'id', name:'id'},           
                { data: 'name', name:'name'},
-               { data: 'email', name:'email'}, 
+               { data: 'lastname', name:'lastname'},
+               { data: 'email', name:'email'},
                { data: 'actions', name: 'actions', orderable: false, searchable: false }
            ],
             buttons:[
@@ -90,19 +92,5 @@
                });
            }
        });
-
-       $('#list').DataTable().$('.btn-delete[data-remote]').on('click', function (e) {
-          e.preventDefault();
-          var url = $(this).data('remote');
-          // confirm then
-          $.ajax({
-              url: url,
-              type: 'DELETE',
-              dataType: 'json',
-              data: {method: '_DELETE'}
-          }).always(function (data) {
-              $(tables).DataTable().draw(false);
-          });
-      });
      </script>
 @endsection

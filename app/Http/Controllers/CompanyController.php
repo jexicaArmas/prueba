@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Auth; 
+use Auth;
+use Storage; 
 use App\Models\Company; 
 use Illuminate\Http\Request;
-use Validator; 
-use Datatables;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class CompanyController extends Controller
 {
+    use ValidatesRequests;
     /**
      * Display a listing of the resource.
      *
@@ -43,16 +46,24 @@ class CompanyController extends Controller
     {
         $this->validate($request,[ 
             'name'     => 'required|string', 
-            'email'    => 'unique:companies',
-            'logo'     => 'string', 
+            'email'    => 'email|unique:companies',
             'website'  => 'url'
         ]);
-
+      
         $company = new Company; 
         $company->name      = $request->name; 
         $company->email     = $request->email; 
-        $company->logo      = $request->logo; 
         $company->website   = $request->website;
+        if ($request->hasFile('logo')){
+            $logo     = $request->file('logo');
+            $fileName = $logo->getClientOriginalName();
+            $filename = $logo->store('public');
+            if(Storage::exists('public/'.$fileName)){
+                Storage::delete('public/'.$fileName);
+            }
+            Storage::disk('local')->move($filename,'logo/'.$fileName);
+            $company->logo = $fileName; 
+        }
         $company->save(); 
 
         return redirect()->route('companies.index')->with('success', 'Se ha creado el registro');
@@ -66,7 +77,7 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -77,7 +88,9 @@ class CompanyController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = Auth::user(); 
+        $company = Company::find($id); 
+        return view('companies.edit', compact('user', 'company'));
     }
 
     /**
@@ -89,7 +102,29 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,[ 
+            'name'     => 'string', 
+            'email'    => 'email', 
+            'website'  => 'url'
+        ]);
+
+        $company = Company::find($id); 
+        $company->name      = $request->name; 
+        $company->email     = $request->email; 
+        if ($request->hasFile('logo')){
+            $logo     = $request->file('logo');
+            $fileName = $logo->getClientOriginalName();
+            $filename = $logo->store('public');
+            if(Storage::exists('public/'.$fileName)){
+                Storage::delete('public/'.$fileName);
+            }
+            Storage::disk('local')->move($filename,'logo/'.$fileName);
+            $company->logo = $fileName; 
+        }
+        $company->website   = $request->website;
+        $company->update(); 
+
+        return redirect()->route('companies.index')->with('success', 'Se ha actualizado el registro');
     }
 
     /**
@@ -100,16 +135,20 @@ class CompanyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $company = Company::find($id); 
+        $company->delete(); 
+        return redirect()->route('companies.index')->with('success', 'Se ha eliminado el registro');
     }
 
-    public function listCompanies(){
-        $companies = Company::all();
+    public function list(){
+        $companies = Company::all(); 
         return datatables($companies)
-            ->addColumn('actions',function($company) {
-                $html = "<a method='post' href='".route('companies.edit',[$company->id])."'><i class='fa fa-edit'> Edit </i></a>";
+            ->addColumn('actions', function($company){
+                $html = "<a href='".route('companies.edit',[$company->id])."'><i class='fa fa-edit'>Edit</i></a>";
+                $html.= "<a href='".route('companies.delete',[$company->id])."'><i class='fa fa-trash'>Delete</i></a>";
                 return $html;
             })
+            ->rawColumns(['actions'])
             ->toJson();
     }
 }
