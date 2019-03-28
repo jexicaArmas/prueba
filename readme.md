@@ -16,7 +16,7 @@
 ## Instalación 
 
 - Descargue este repositorio
-- Ejecute el comando: composer instal. 
+- Ejecute el comando: composer install 
 - Configure el archivo .env con una base de datos de MySQL 
 - Ejecute Migraciones 
 - Ejecute el seeder con el siguiente comando php artisan db:seed --class=TestAdminTableSeeder
